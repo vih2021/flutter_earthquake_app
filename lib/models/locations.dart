@@ -34,11 +34,11 @@ class Coordinates{
     required this.z,
   });
 
-  factory Coordinates.fromList(List<double> lista) {
+  factory Coordinates.fromList(List<dynamic> lista) {
     return Coordinates(
-      x: lista[0],
-      y: lista[1],
-      z: lista[2],
+      x: lista[0].toDouble(),
+      y: lista[1].toDouble(),
+      z: lista[2].toDouble() ,
     );
   }
 

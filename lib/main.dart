@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_earthquakes/models/database_connection.dart';
+import 'package:flutter_earthquakes/models/log.dart';
 import 'package:flutter_earthquakes/models/search_params.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,8 @@ import './controllers/history_controller.dart';
 import './binding/earthquake_binding.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  DatabaseConnection.init();
   runApp(
     ChangeNotifierProvider(
       create: (context) => LogHistoryController(),
@@ -60,13 +64,14 @@ class _DropDownMenuDays extends State<DropDownMenuDays> {
             initialSelection: CurrentSearchParams.getDay,
             width: 280.0,
             dropdownMenuEntries: list,
-            onSelected: (value) {
+            onSelected: (value) async {
               CurrentSearchParams.setDay = value!;
               
+              Get.find<EarthquakeController>().getEarthquakes(CurrentSearchParams.getMagnetude, CurrentSearchParams.getDay);
+
               Provider.of<LogHistoryController>(context, listen: false)
               .addLog(CurrentSearchParams.getMagnetude, CurrentSearchParams.day);
-
-              Get.find<EarthquakeController>().getEarthquakes(CurrentSearchParams.getMagnetude, CurrentSearchParams.getDay);
+              
             },
           )
         ],
@@ -107,11 +112,11 @@ class _DropDownMenuMagnetude extends State<DropDownMenuMagnetude> {
             onSelected: (value) {
                 CurrentSearchParams.setMagnetude = value!;
 
-                Provider.of<LogHistoryController>(context, listen: false)
-                .addLog(CurrentSearchParams.getMagnetude, CurrentSearchParams.day);
-
                 Get.find<EarthquakeController>().getEarthquakes(CurrentSearchParams.getMagnetude, CurrentSearchParams.getDay);
 
+                Provider.of<LogHistoryController>(context, listen: false)
+                .addLog(CurrentSearchParams.getMagnetude, CurrentSearchParams.day);
+                
             },
           )
         ],
@@ -122,7 +127,7 @@ class _DropDownMenuMagnetude extends State<DropDownMenuMagnetude> {
 
 class GoogleMapsPage extends GetView<EarthquakeController> {
 
-  GoogleMapsPage(){
+  GoogleMapsPage({super.key}){
     Get.find<EarthquakeController>().getEarthquakes(CurrentSearchParams.getMagnetude, CurrentSearchParams.getDay);
   }
 
@@ -130,20 +135,20 @@ class GoogleMapsPage extends GetView<EarthquakeController> {
     final Map<String, Marker> _markers = {};
 
     _markers.clear();
-      for (final earthquake in googleEarthquakes.features) {
-        final marker = Marker(
-          markerId: MarkerId(earthquake.id),
-          position: LatLng(
-              earthquake.geometry.coordinates.x, earthquake.geometry.coordinates.y),
-        );
-        _markers[earthquake.id] = marker;
-      }
-
+    for (final earthquake in googleEarthquakes.features) {
+      final marker = Marker(
+        markerId: MarkerId(earthquake.id),
+        position: LatLng(
+            earthquake.geometry.coordinates.x, earthquake.geometry.coordinates.y),
+      );
+      _markers[earthquake.id] = marker;
+    }
     return _markers.values.toSet();
   }
 
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -154,10 +159,11 @@ class GoogleMapsPage extends GetView<EarthquakeController> {
           initialCameraPosition: const CameraPosition(
             target: LatLng(0, 0),
             zoom: 4
-            
           ),
           markers: createAndReturnMarkers(state),
         ),
+        //GABRIEL ARRUME ESSE TEXT ABAICO (CENTRALIZE, DEIXE BONITO ETC ...)
+        onError: (error) => Text("Deu ruim, recarregue a Página"),
         ),
         drawer: const Drawer(
           child: Column(

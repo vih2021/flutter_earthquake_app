@@ -14,5 +14,3 @@ class EarthquakeController extends GetxController with StateMixin <Earthquakes> 
       });
     }
 }
-
-//implementar gerenciamento de estado primeiro com provider

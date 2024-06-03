@@ -31,7 +31,7 @@ Map<String, dynamic> _$CoordinatesToJson(Coordinates instance) =>
 
 Geometry _$GeometryFromJson(Map<String, dynamic> json) => Geometry(
       coordinates:
-          Coordinates.fromList(json['coordinates'].cast<double>()),
+          Coordinates.fromList(json['coordinates']),
     );
 
 Map<String, dynamic> _$GeometryToJson(Geometry instance) => <String, dynamic>{

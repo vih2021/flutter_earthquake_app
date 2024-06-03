@@ -46,6 +46,7 @@ class _RestClient implements RestClient {
               _dio.options.baseUrl,
               baseUrl,
             ))));
+
     var value = Earthquakes.fromJson(_result.data!);
 
     return value;

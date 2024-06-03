@@ -1,33 +1,38 @@
 import 'dart:collection';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_earthquakes/models/database_persistence.dart';
 import 'package:intl/intl.dart';
-import '../models/historic_log.dart';
-import 'package:flutter_earthquakes/models/search_params.dart';
+import '../models/log.dart';
 
 class LogHistoryController extends ChangeNotifier {
 
+  late DatabasePersistence database;
   final List<Log> _historic_items = [];
+  
+  LogHistoryController(){
+      database = DatabasePersistence();
+      loadHistoryLogs();
+  }
 
   UnmodifiableListView<Log> get items => UnmodifiableListView(_historic_items);
   
   void addLog(String magnetude, String day){
     Log newLog = _createLog(magnetude, day);
 
-    _addLogToDatabase(newLog);
-    _addLogToList(newLog);
-  }
-
-  void _addLogToList(Log newLog){
+    database.insertLog(newLog);
     _historic_items.add(newLog);
   }
 
-  void _addLogToDatabase(Log newLog){
+  void loadHistoryLogs() async{
+   List<Map<String,Object?>> logs = await database.getLogs();
+
+    for(final log in logs){
+      _historic_items.add(Log.fromMap(log));
+    }
   }
 
-  void _deleteAllLogsFromDatabase(){
-  }
-
-  void resetHistory(){
+  void deleteAllLogs(){
+    database.deleteAllLogs();
     _historic_items.clear();
   }
 
