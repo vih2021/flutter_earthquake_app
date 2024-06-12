@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_earthquakes/models/database_connection.dart';
 import 'package:flutter_earthquakes/models/log.dart';
 import 'package:flutter_earthquakes/models/search_params.dart';
+import 'package:flutter_earthquakes/pages/history_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
             name: "/",
             page: () => GoogleMapsPage(),
             binding: EarthquakeBinding()),
+        GetPage(
+          name: "/historico",
+          page: () => HistoryPage())
       ],
     );
   }
@@ -117,6 +121,7 @@ class _DropDownMenuMagnetude extends State<DropDownMenuMagnetude> {
                 Provider.of<LogHistoryController>(context, listen: false)
                 .addLog(CurrentSearchParams.getMagnetude, CurrentSearchParams.day);
                 
+                Provider.of<LogHistoryController>(context, listen: false).items;
             },
           )
         ],
@@ -124,6 +129,15 @@ class _DropDownMenuMagnetude extends State<DropDownMenuMagnetude> {
     );
   }
 }
+
+// class ListButton extends StatelessWidget {
+//   const ListButton({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Butt
+//   }
+// }
 
 class GoogleMapsPage extends GetView<EarthquakeController> {
 
@@ -165,9 +179,9 @@ class GoogleMapsPage extends GetView<EarthquakeController> {
         //GABRIEL ARRUME ESSE TEXT ABAICO (CENTRALIZE, DEIXE BONITO ETC ...)
         onError: (error) => Text("Deu ruim, recarregue a Página"),
         ),
-        drawer: const Drawer(
+        drawer: Drawer(
           child: Column(
-            children: [DropDownMenuDays(), DropDownMenuMagnetude()],
+            children: [DropDownMenuDays(), DropDownMenuMagnetude(), TextButton(onPressed: () => {Navigator.pushNamed(context, "/historico")}, child: Text("Historico"),)],
           ),
         ),
       ),
