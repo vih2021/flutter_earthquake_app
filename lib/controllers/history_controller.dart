@@ -8,10 +8,18 @@ class LogHistoryController extends ChangeNotifier {
 
   late DatabasePersistence database;
   final List<Log> _historic_items = [];
+  static LogHistoryController? _instance;
   
   LogHistoryController(){
       database = DatabasePersistence();
-      loadHistoryLogs();
+  }
+
+  static LogHistoryController? get instance {
+    if (_instance == null) {
+      _instance = LogHistoryController();
+    }
+    
+    return _instance;
   }
 
   UnmodifiableListView<Log> get items => UnmodifiableListView(_historic_items);
@@ -23,16 +31,18 @@ class LogHistoryController extends ChangeNotifier {
     _historic_items.add(newLog);
   }
 
-  void loadHistoryLogs() async{
+  Future<void> loadHistoryLogs() async{ 
+
    List<Map<String,Object?>> logs = await database.getLogs();
 
     for(final log in logs){
       _historic_items.add(Log.fromMap(log));
     }
+    
   }
 
   void deleteAllLogs(){
-    database.deleteAllLogs();
+    //database.deleteAllLogs();
     _historic_items.clear();
   }
 

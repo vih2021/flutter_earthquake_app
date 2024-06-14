@@ -11,12 +11,13 @@ import './controllers/history_controller.dart';
 import './binding/earthquake_binding.dart';
 
 void main() {
+ // LogHistoryController.instance.loadHistoryLogs();
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseConnection.init();
   runApp(
     ChangeNotifierProvider(
       create: (context) => LogHistoryController(),
-      child: const MyApp(),
+      child: const MyApp()
     ),
   );
 }
@@ -120,8 +121,7 @@ class _DropDownMenuMagnetude extends State<DropDownMenuMagnetude> {
 
                 Provider.of<LogHistoryController>(context, listen: false)
                 .addLog(CurrentSearchParams.getMagnetude, CurrentSearchParams.day);
-                
-                Provider.of<LogHistoryController>(context, listen: false).items;
+
             },
           )
         ],
@@ -130,16 +130,9 @@ class _DropDownMenuMagnetude extends State<DropDownMenuMagnetude> {
   }
 }
 
-// class ListButton extends StatelessWidget {
-//   const ListButton({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Butt
-//   }
-// }
-
 class GoogleMapsPage extends GetView<EarthquakeController> {
+
+  static bool isLogLoaded = false;
 
   GoogleMapsPage({super.key}){
     Get.find<EarthquakeController>().getEarthquakes(CurrentSearchParams.getMagnetude, CurrentSearchParams.getDay);
@@ -159,7 +152,6 @@ class GoogleMapsPage extends GetView<EarthquakeController> {
     }
     return _markers.values.toSet();
   }
-
 
   @override
   Widget build(BuildContext context){
@@ -181,7 +173,15 @@ class GoogleMapsPage extends GetView<EarthquakeController> {
         ),
         drawer: Drawer(
           child: Column(
-            children: [DropDownMenuDays(), DropDownMenuMagnetude(), TextButton(onPressed: () => {Navigator.pushNamed(context, "/historico")}, child: Text("Historico"),)],
+            children: [DropDownMenuDays(), DropDownMenuMagnetude(), TextButton(onPressed: () => {
+              if(!isLogLoaded){
+                isLogLoaded = true,
+                Provider.of<LogHistoryController>(context, listen: false).loadHistoryLogs(),
+              },
+                Navigator.pushNamed(context, "/historico")
+              },    
+              child: Text("Historico"),
+            )], 
           ),
         ),
       ),
