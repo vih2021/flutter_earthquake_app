@@ -1,54 +1,63 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
 
 class GeminiPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
-  }
-
+  State<StatefulWidget> createState() => _GeminiPage();
 }
 
 class _GeminiPage extends State<GeminiPage> {
   final gemini = Gemini.instance;
   String input = '';
-  String? value;
+  String value2 = '';
+  List<Text> textList = [];
 
   @override
   Widget build(BuildContext context) {
-
-    return Column(
+    print(value2 +
+        "INICIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+    return MaterialApp(
+        home: Scaffold(
+            body: Column(
       children: [
-        Container(
-          child: Text(value!),
+        SingleChildScrollView(
+          child: Stack(
+            children: textList,
+          ),
         ),
         Container(
           child: Row(
             children: [
-              TextField(
-                onChanged: (value) => input = value,
-              ),
-              TextButton(onPressed: () => _geminiChat(input), child: Text('Enviar'))
+              Expanded(
+                  flex: 8,
+                  child: TextField(
+                      onChanged: (value) => {input = value},
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                        hintText: 'Enter Password',
+                      ))),
+              Expanded(
+                  flex: 2,
+                  child: TextButton(
+                      onPressed: () => _geminiChat(input),
+                      child: Text('Enviar')))
             ],
           ),
         )
       ],
-    );
-
+    )));
   }
 
   _geminiChat(String value) {
-    gemini.streamGenerateContent(value)
-        .listen((event) {
-          value = event.output!;
+    textList.clear();
+    gemini.streamGenerateContent(value).listen((event) {
+      setState(() {
+        textList.add(Text(event.output!));
+      });
     }).onError((e) {
       printError(info: e);
     });
-    return value;
   }
-
 }
