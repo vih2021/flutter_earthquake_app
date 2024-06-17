@@ -10,33 +10,38 @@ class GeminiPage extends StatefulWidget {
 class _GeminiPage extends State<GeminiPage> {
   final gemini = Gemini.instance;
   String input = '';
-  String value2 = '';
-  List<Text> textList = [];
+  Text textWigget = new Text('');
 
   @override
   Widget build(BuildContext context) {
-    print(value2 +
-        "INICIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
     return MaterialApp(
         home: Scaffold(
-            body: Column(
-      children: [
-        SingleChildScrollView(
-          child: Stack(
-            children: textList,
+      appBar: AppBar(
+        title: const Text("Gemini"),
+        backgroundColor: Colors.lightBlue,
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            fit: FlexFit.loose,
+            child: SingleChildScrollView(
+                child: Column(
+              children: [
+                Container(
+                  child: textWigget,
+                )
+              ],
+            )),
           ),
-        ),
-        Container(
-          child: Row(
+          Row(
             children: [
               Expanded(
                   flex: 8,
                   child: TextField(
-                      onChanged: (value) => {input = value},
+                      onChanged: (value) => input = value,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Password',
-                        hintText: 'Enter Password',
                       ))),
               Expanded(
                   flex: 2,
@@ -44,19 +49,18 @@ class _GeminiPage extends State<GeminiPage> {
                       onPressed: () => _geminiChat(input),
                       child: Text('Enviar')))
             ],
-          ),
-        )
-      ],
-    )));
+          )
+        ],
+      ),
+    ));
   }
 
   _geminiChat(String value) {
-    textList.clear();
-    gemini.streamGenerateContent(value).listen((event) {
+    gemini.text(value).then((event) {
       setState(() {
-        textList.add(Text(event.output!));
+        textWigget = Text(event!.output!);
       });
-    }).onError((e) {
+    }).catchError((e) {
       printError(info: e);
     });
   }

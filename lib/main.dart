@@ -13,7 +13,7 @@ import './controllers/history_controller.dart';
 import './binding/earthquake_binding.dart';
 
 void main() {
-  Gemini.init(apiKey: '');
+  Gemini.init(apiKey: 'AIzaSyCpeBVTCYzwBuIoxC9R1VEaUWkLu7rTyf4');
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseConnection.init();
   runApp(
