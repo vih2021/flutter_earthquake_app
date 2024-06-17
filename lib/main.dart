@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_earthquakes/models/database_connection.dart';
 import 'package:flutter_earthquakes/models/log.dart';
 import 'package:flutter_earthquakes/models/search_params.dart';
+import 'package:flutter_earthquakes/pages/gemini_page.dart';
 import 'package:flutter_earthquakes/pages/history_page.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
@@ -11,7 +13,7 @@ import './controllers/history_controller.dart';
 import './binding/earthquake_binding.dart';
 
 void main() {
- // LogHistoryController.instance.loadHistoryLogs();
+  Gemini.init(apiKey: '');
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseConnection.init();
   runApp(
@@ -36,7 +38,10 @@ class MyApp extends StatelessWidget {
             binding: EarthquakeBinding()),
         GetPage(
           name: "/historico",
-          page: () => HistoryPage())
+          page: () => HistoryPage()),
+        GetPage(
+            name: "/gemini",
+            page: () => GeminiPage())
       ],
     );
   }
@@ -181,7 +186,12 @@ class GoogleMapsPage extends GetView<EarthquakeController> {
                 Navigator.pushNamed(context, "/historico")
               },    
               child: Text("Historico"),
-            )], 
+            ),
+            TextButton(onPressed: () => {
+              Navigator.pushNamed(context, "/gemini")
+            },
+            child: Text('Gemini'))
+            ],
           ),
         ),
       ),
